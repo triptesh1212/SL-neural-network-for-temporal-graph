@@ -3,7 +3,12 @@ import math
 import logging
 import time
 import random
+import os
 import sys
+
+# Allow imports from project root when running as `python models/tgat.py`
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import argparse
 
 import torch
