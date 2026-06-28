@@ -13,12 +13,26 @@ I gratefully acknowledge the authors for making their code publicly available. M
 
 ## Commands to run in Kaggle
 
-`!git clone https://github.com/triptesh1212/SL-neural-network-for-temporal-graph.git`
+```{bash}
+!git clone https://github.com/triptesh1212/SL-neural-network-for-temporal-graph.git
+```
 
-`!mkdir log data saved_models saved_checkpoints`
+```{bash}
+cd SL-neural-network-for-temporal-graph
+```
 
-`!wget http://snap.stanford.edu/jodie/wikipedia.csv -P data/`
+```{bash}
+!mkdir log data saved_models saved_checkpoints
+```
 
-`!python utils/process_data.py`
+```{bash}
+!wget http://snap.stanford.edu/jodie/wikipedia.csv -P data/
+```
 
-`!python -u models/tgat.py -d wikipedia --bs 200 --uniform  --n_degree 20 --agg_method attn --attn_mode prod --gpu 0 --n_head 2 --prefix hello_world`
+```{bash}
+!python utils/process_data.py
+```
+
+```{bash}
+!python -u models/tgat.py -d wikipedia --bs 200 --uniform  --n_degree 20 --agg_method attn --attn_mode prod --gpu 0 --n_head 2 --prefix hello_world
+```
