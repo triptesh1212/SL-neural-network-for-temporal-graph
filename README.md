@@ -18,7 +18,7 @@ I gratefully acknowledge the authors for making their code publicly available. M
 ```
 
 ```{bash}
-cd SL-neural-network-for-temporal-graph
+%cd SL-neural-network-for-temporal-graph
 ```
 
 ```{bash}
