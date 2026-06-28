@@ -36,3 +36,7 @@ I gratefully acknowledge the authors for making their code publicly available. M
 ```{bash}
 !python -u models/tgat.py -d wikipedia --bs 200 --uniform  --n_degree 20 --agg_method attn --attn_mode prod --gpu 0 --n_head 2 --prefix hello_world
 ```
+
+```{bash}
+!python -u models/sl_tgat.py -d wikipedia --bs 200 --uniform  --n_degree 20 --agg_method attn --attn_mode prod --gpu 0 --n_head 2 --prefix hello_world
+```
