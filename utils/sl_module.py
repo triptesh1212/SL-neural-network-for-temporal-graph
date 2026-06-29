@@ -29,7 +29,7 @@ def imex_sl_step(z, coupling, dt, alpha, omega, beta, gamma, tol=1e-5, max_iter=
         if torch.max(torch.abs(update)) < tol:
             break
 
-    phi_new = phi_tilde + dt * (omega - gamma * r_new ** 2)
+    phi_new = phi_tilde + dt * (omega + gamma * r_new ** 2)
     return torch.polar(r_new, phi_new)
 
 
@@ -86,7 +86,7 @@ class SLAttnModel(nn.Module):
 
         self.complex_enc = nn.Linear(feat_dim, feat_dim, dtype=torch.cfloat)
         self.h_proj = nn.Linear(self.model_dim, feat_dim)
-        self.coupling_ffn = MergeLayer(feat_dim, feat_dim, feat_dim, feat_dim)
+        self.coupling_ffn = MergeLayer(feat_dim, 2 * feat_dim, feat_dim, 2 * feat_dim)
         self.merger = MergeLayer(feat_dim, feat_dim, feat_dim, feat_dim)
 
     def _temporal_attention(self, src, src_t, seq, seq_t, seq_e, mask):
@@ -109,12 +109,15 @@ class SLAttnModel(nn.Module):
     def forward(self, src, src_t, seq, seq_t, seq_e, mask):
         h_v, attn = self._temporal_attention(src, src_t, seq, seq_t, seq_e, mask)
 
-        # z_v^(l): complex oscillator state for node v at layer l
         z_v = self.complex_enc(src.to(torch.cfloat))
 
-        # F_θ^(l)_v = FFN(h_v(t) || z_v^(l))
+        # F_θ^(l)_v = FFN(h_v(t) || z_v^(l)) with full complex state
         h_v_feat = self.h_proj(h_v)
-        coupling = self.coupling_ffn(h_v_feat, z_v.real).to(torch.cfloat)
+        z_v_ri = torch.cat([z_v.real, z_v.imag], dim=-1)
+        coupling_ri = self.coupling_ffn(h_v_feat, z_v_ri)
+        coupling = torch.view_as_complex(
+            coupling_ri.reshape(*coupling_ri.shape[:-1], self.feat_dim, 2)
+        )
         coupling = self.coupling_strength * coupling
 
         z_out = imex_sl_step(
