@@ -33,6 +33,30 @@ def imex_sl_step(z, coupling, dt, alpha, omega, beta, gamma, tol=1e-5, max_iter=
     return torch.polar(r_new, phi_new)
 
 
+def sl_exact_step(h, zeta, nu, dt):
+    h = torch.as_tensor(h)
+    if not torch.is_complex(h):
+        h = h.to(torch.complex64)
+    zeta = torch.as_tensor(zeta, dtype=h.dtype, device=h.device)
+    nu = torch.as_tensor(nu, dtype=h.dtype, device=h.device)
+    zr, nr = zeta.real, nu.real
+    dt = torch.as_tensor(dt, dtype=zr.dtype, device=h.device)
+
+    propagator = torch.exp(zeta * dt)
+    absh2 = h.real ** 2 + h.imag ** 2
+    c = (nr / zr) * torch.expm1(2.0 * zr * dt)
+    d = 1.0 + c * absh2
+    saturation = torch.exp((-nu / (2.0 * nr)) * torch.log(d))
+    return propagator * saturation * h
+
+
+def exact_sl_step(z, coupling, dt, alpha, omega, beta, gamma):
+    z_tilde = z + dt * coupling
+    zeta = torch.complex(alpha, omega)
+    nu = torch.complex(beta, -gamma)
+    return sl_exact_step(z_tilde, zeta, nu, dt)
+
+
 class SLAttnModel(nn.Module):
 
     def __init__(
@@ -120,7 +144,17 @@ class SLAttnModel(nn.Module):
         )
         coupling = self.coupling_strength * coupling
 
-        z_out = imex_sl_step(
+        # z_out = imex_sl_step(
+        #     z_v,
+        #     coupling,
+        #     self.dt,
+        #     self.sl_alpha,
+        #     self.sl_omega,
+        #     self.sl_beta,
+        #     self.sl_gamma,
+        # )
+
+        z_out = exact_sl_step(
             z_v,
             coupling,
             self.dt,
