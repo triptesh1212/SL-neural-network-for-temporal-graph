@@ -11,6 +11,7 @@
 #SBATCH --error=log/slurm_%j.err
 
 module load python/3.11.7
+module load cuda/12.2
 source $WORK/tripteshb/venv/bin/activate
 
 cd $WORK/tripteshb/SL-neural-network-for-temporal-graph
