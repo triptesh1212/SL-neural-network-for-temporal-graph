@@ -187,7 +187,12 @@ val_rand_sampler = RandEdgeSampler(src_l, dst_l)
 test_rand_sampler = RandEdgeSampler(src_l, dst_l)
 nn_test_rand_sampler = RandEdgeSampler(nn_test_src_l, nn_test_dst_l)
 
-device = torch.device('cuda:{}'.format(GPU))
+if torch.cuda.is_available():
+    device = torch.device('cuda:{}'.format(GPU))
+elif getattr(torch.backends, 'mps', None) and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = SLTGAN(
     train_ngh_finder,
     n_feat,
