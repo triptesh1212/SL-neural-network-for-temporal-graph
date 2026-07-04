@@ -16,4 +16,6 @@ source $WORK/tripteshb/venv/bin/activate
 
 cd $WORK/tripteshb/SL-neural-network-for-temporal-graph
 
-python3 -u models/sl_tgat.py -d wikipedia --bs 200 --uniform --n_degree 20 --attn_mode prod --gpu 0 --n_head 2 --n_layer 4 --prefix hello_world --n_epoch 50
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
+python3 -u models/sl_tgat.py -d wikipedia --bs 200 --uniform --n_degree 20 --attn_mode prod --gpu 0 --n_head 2 --n_layer 3 --prefix hello_world --n_epoch 50
