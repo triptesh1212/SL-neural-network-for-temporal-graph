@@ -18,4 +18,4 @@ cd $WORK/tripteshb/SL-neural-network-for-temporal-graph
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-python3 -u models/sl_tgat.py -d wikipedia --bs 100 --uniform --n_degree 10 --attn_mode prod --gpu 0 --n_head 2 --n_layer 3 --prefix hello_world --n_epoch 50 --coupling_strength 0.7
+python3 -u models/sl_tgat.py -d wikipedia --bs 100 --uniform --n_degree 10 --attn_mode prod --gpu 0 --n_head 2 --n_layer 3 --prefix hello_world --n_epoch 50 --coupling_strength 1.2
