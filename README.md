@@ -40,3 +40,103 @@ I gratefully acknowledge the authors for making their code publicly available. M
 ```{bash}
 !python -u models/sl_tgat.py -d wikipedia --bs 200 --uniform --n_degree 20 --attn_mode prod --gpu 0 --n_head 2 --prefix hello_world
 ```
+
+
+
+## How to run on the HPC
+
+```{bash}
+step ssh login <email> --provisioner cineca-hpc
+```
+
+```{bash}
+ssh-keygen -R login.leonardo.cineca.it
+```
+
+```{bash}
+ssh-keygen -F login.leonardo.cineca.it
+```
+
+```{bash}
+ssh <user_id>@login.leonardo.cineca.it
+```
+
+```{bash}
+cd $WORK
+```
+
+```{bash}
+mkdir user_directory_x
+```
+
+```{bash}
+cd user_directory_x
+```
+
+<br>
+
+First load the Python 3.11 environment:
+
+```{bash}
+module load python/3.11.7
+```
+
+Set up a new Python virtual environment:
+
+```{bash}
+python3 -m venv $WORK/user_directory_x/venv
+```
+
+Activate your Python virtual environment before installing packages:
+
+```{bash}
+source $WORK/user_directory_x/venv/bin/activate
+```
+
+<br>
+
+```{bash}
+git clone https://github.com/triptesh1212/SL-neural-network-for-temporal-graph.git
+```
+
+```{bash}
+cd SL-neural-network-for-temporal-graph
+```
+
+```{bash}
+chmod +x run_sl_tgat.sh
+```
+
+
+```{bash}
+sbatch run_sl_tgat.sh
+```
+
+```{bash}
+squeue -u tbiswas0
+```
+
+```{bash}
+tail -f log/slurm_<>.out
+```
+
+```{bash}
+cat log/slurm_<>.err
+```
+
+<br>
+
+```{bash}
+deactivate
+```
+
+```{bash}
+exit
+```
+
+
+
+
+
+
+
