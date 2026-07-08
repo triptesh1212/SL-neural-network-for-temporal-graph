@@ -113,7 +113,7 @@ sbatch run_sl_tgat.sh
 ```
 
 ```{bash}
-squeue -u tbiswas0
+squeue -u <user_id>
 ```
 
 ```{bash}
