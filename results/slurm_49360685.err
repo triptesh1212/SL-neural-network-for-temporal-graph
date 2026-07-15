@@ -1,0 +1,136 @@
+INFO:root:Namespace(data='reddit', bs=200, prefix='hello_world', n_degree=20, n_head=2, n_epoch=50, n_layer=2, lr=0.0001, drop_out=0.1, gpu=0, node_dim=100, time_dim=100, agg_method='attn', attn_mode='prod', time='time', uniform=True)
+INFO:utils.module:Aggregation uses attention model
+INFO:utils.module:Using scaled prod attention
+INFO:utils.module:Using scaled prod attention
+INFO:utils.module:Using time encoding
+INFO:root:num of training instances: 389989
+INFO:root:num of batches per epoch: 1950
+INFO:root:start 0 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 0:
+INFO:root:Epoch mean loss: 0.5283172602225573
+INFO:root:train acc: 0.8901074740861975, val acc: 0.9071166617107741, new node val acc: 0.8852850539291218
+INFO:root:train auc: 0.9552688219405462, val auc: 0.9706198169623682, new node val auc: 0.9560075329566855
+INFO:root:train ap: 0.954563029915935, val ap: 0.9721999010237419, new node val ap: 0.9573725889751006
+INFO:root:start 1 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 1:
+INFO:root:Epoch mean loss: 0.432286096681387
+INFO:root:train acc: 0.9119268685215492, val acc: 0.9155020319159479, new node val acc: 0.8941448382126348
+INFO:root:train auc: 0.9706414626092558, val auc: 0.9748970826312485, new node val auc: 0.9621674370826914
+INFO:root:train ap: 0.9718504793637648, val ap: 0.9762427869260064, new node val ap: 0.9630340900416468
+INFO:root:start 2 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 2:
+INFO:root:Epoch mean loss: 0.41057863973654235
+INFO:root:train acc: 0.9166849699945445, val acc: 0.9164089602537416, new node val acc: 0.8948125321006677
+INFO:root:train auc: 0.9733126754593677, val auc: 0.9763537846499487, new node val auc: 0.9629549734634482
+INFO:root:train ap: 0.9744537752623682, val ap: 0.9779953806094197, new node val ap: 0.964125488475
+INFO:root:start 3 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 3:
+INFO:root:Epoch mean loss: 0.3958523916510435
+INFO:root:train acc: 0.9198666939443536, val acc: 0.9224749727425909, new node val acc: 0.9022085259373395
+INFO:root:train auc: 0.9750891827808151, val auc: 0.9777374698516536, new node val auc: 0.9659664441020374
+INFO:root:train ap: 0.9761541107221773, val ap: 0.9790477869212799, new node val ap: 0.9674062725715306
+INFO:root:start 4 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 4:
+INFO:root:Epoch mean loss: 0.38567987396166875
+INFO:root:train acc: 0.9220626841243862, val acc: 0.9243532560214094, new node val acc: 0.9051361068310222
+INFO:root:train auc: 0.9762936720815777, val auc: 0.9793682888954968, new node val auc: 0.9680123266563945
+INFO:root:train ap: 0.9773853600714646, val ap: 0.9806450397219388, new node val ap: 0.9696648535664785
+INFO:root:start 5 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 5:
+INFO:root:Epoch mean loss: 0.3764403391801394
+INFO:root:train acc: 0.9241913802509547, val acc: 0.9272772326295966, new node val acc: 0.9091936312275296
+INFO:root:train auc: 0.9773089734216667, val auc: 0.9801810552747215, new node val auc: 0.9695788392398562
+INFO:root:train ap: 0.9784484439585867, val ap: 0.9814005028928567, new node val ap: 0.970508268693833
+INFO:root:start 6 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 6:
+INFO:root:Epoch mean loss: 0.37112352853402114
+INFO:root:train acc: 0.9255256683033279, val acc: 0.926766775696303, new node val acc: 0.9070878274268106
+INFO:root:train auc: 0.9777991937557311, val auc: 0.9799177321835661, new node val auc: 0.9675791816469782
+INFO:root:train ap: 0.9787938323810879, val ap: 0.9811861774232695, new node val ap: 0.9691207739127379
+INFO:root:start 7 epoch
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:epoch: 7:
+INFO:root:Epoch mean loss: 0.3629911605669902
+INFO:root:train acc: 0.9270013911620294, val acc: 0.9293587075032214, new node val acc: 0.911838726245506
+INFO:root:train auc: 0.9787187230066975, val auc: 0.9799945485181881, new node val auc: 0.9688734805683958
+INFO:root:train ap: 0.9797740653168759, val ap: 0.9812102164472334, new node val ap: 0.9706116524369576
+INFO:root:No improvment over 3 epochs, stop training
+INFO:root:Loading the best model at epoch 5
+/leonardo_work/IscrC_SISTER/tripteshb/SL-neural-network-for-temporal-graph/models/tgat.py:301: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  tgan.load_state_dict(torch.load(best_model_path))
+INFO:root:Loaded the best model at epoch 5 for inference
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/leonardo_work/IscrC_SISTER/tripteshb/venv/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+INFO:root:Test statistics: Old nodes -- acc: 0.9267419962335216, auc: 0.9799259920044935, ap: 0.981296318234521
+INFO:root:Test statistics: New nodes -- acc: 0.8970658139762815, auc: 0.9635665593710827, ap: 0.9655110870853932
+INFO:root:Saving TGAN model
+INFO:root:TGAN models saved
