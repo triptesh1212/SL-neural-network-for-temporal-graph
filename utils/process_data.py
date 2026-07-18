@@ -79,4 +79,4 @@ def run(data_name):
     np.save(OUT_NODE_FEAT, rand_feat)
     
     
-run('reddit')
+run('wikipedia')
