@@ -5,6 +5,8 @@ import torch.nn as nn
 
 from functools import partial
 
+from utils.sl_module import sl_exact_step
+
 
 def cbrt(x):
     return torch.sign(x) * torch.abs(x) ** (1.0 / 3.0)
@@ -186,25 +188,11 @@ class SLSeq(nn.Module):
         if use_hid_enc:
             self.hid_enc = nn.Linear(d_model, d_model, dtype=torch.cfloat)
 
-    def solve_implicit_r(self, r_prev, max_iter=20):
-        r_next = r_prev.clone()
-        zr = self.zeta.real
-        nr = self.nu.real
-        for _ in range(max_iter):
-            residual = r_next - r_prev - self.dt * (zr * r_next - nr * r_next ** (self.p + 1))
-            deriv = 1 - self.dt * (zr - (self.p + 1) * nr * r_next ** self.p)
-            update = residual / deriv.clamp(min=1e-8)
-            r_next = r_next - update
-            if torch.max(torch.abs(update)) < self.tol:
-                return r_next
-        return r_next
-
     def ode_step(self, h):
-        theta = torch.angle(h)
-        r = torch.abs(h).clamp(min=1e-8)
-        r = self.solve_implicit_r(r)
-        theta = theta + self.dt * (self.zeta.imag - self.nu.imag * r ** 2)
-        h_new = torch.polar(r, theta)
+        # Same closed-form SL flow as SL-TGAT (sl_exact_step); clamp Re(ζ), Re(ν) for stability
+        zeta = torch.complex(self.zeta.real.clamp(min=1e-4), self.zeta.imag)
+        nu = torch.complex(self.nu.real.clamp(min=1e-4), self.nu.imag)
+        h_new = sl_exact_step(h, zeta, nu, self.dt)
         if self.use_hid_enc:
             h_new = h_new + 0.1 * torch.view_as_complex(
                 self.activation(torch.view_as_real(self.hid_enc(h_new)))
