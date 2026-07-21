@@ -18,7 +18,7 @@ from sklearn.metrics import roc_auc_score
 
 from utils.sl_dyg_module import DyGSLRNNLP
 from utils.graph import NeighborFinder
-from utils import EarlyStopMonitor, RandEdgeSampler
+from utils import EarlyStopMonitor2, RandEdgeSampler
 
 parser = argparse.ArgumentParser('DyG-SLRNN experiments on temporal link prediction')
 parser.add_argument('-d', '--data', type=str, default='wikipedia')
@@ -26,7 +26,7 @@ parser.add_argument('--bs', type=int, default=200, help='batch_size')
 parser.add_argument('--prefix', type=str, default='', help='prefix to name the checkpoints')
 parser.add_argument('--n_degree', type=int, default=20, help='kept for TGAT CLI compatibility (unused)')
 parser.add_argument('--n_head', type=int, default=2, help='number of heads')
-parser.add_argument('--n_epoch', type=int, default=5, help='number of epochs')
+parser.add_argument('--n_epoch', type=int, default=100, help='number of epochs')
 parser.add_argument('--n_layer', type=int, default=2, help='number of SLSeq layers')
 parser.add_argument('--lr', type=float, default=0.0001, help='learning rate')
 parser.add_argument('--drop_out', type=float, default=0.1, help='dropout probability')
@@ -38,6 +38,7 @@ parser.add_argument('--patch_size', type=int, default=1, help='patch size')
 parser.add_argument('--gamma', type=float, default=0.5, help='time-diff branch width factor')
 parser.add_argument('--max_input_sequence_length', type=int, default=32, help='max neighbor sequence length')
 parser.add_argument('--max_interaction_times', type=int, default=5, help='max prior src-dst interactions')
+parser.add_argument('--patience', type=int, default=20, help='patience for early stopping')
 # Stuart-Landau
 parser.add_argument('--sl_dt', type=float, default=1.0, help='SL time step')
 parser.add_argument('--sl_p', type=int, default=2, help='SL nonlinearity power')
@@ -64,6 +65,7 @@ UNIFORM = args.uniform
 DATA = args.data
 NUM_LAYER = args.n_layer
 LEARNING_RATE = args.lr
+PATIENCE = args.patience
 
 tag = 'sl-rnn'
 MODEL_SAVE_PATH = f'./saved_models/{args.prefix}-{tag}-{args.data}.pth'
@@ -234,7 +236,7 @@ logger.info('num of batches per epoch: {}'.format(num_batch))
 idx_list = np.arange(num_instance)
 np.random.shuffle(idx_list)
 
-early_stopper = EarlyStopMonitor()
+early_stopper = EarlyStopMonitor2(patience=PATIENCE)
 for epoch in range(NUM_EPOCH):
     model.ngh_finder = train_ngh_finder
     acc, ap, auc, m_loss = [], [], [], []
@@ -279,13 +281,22 @@ for epoch in range(NUM_EPOCH):
     logger.info('train auc: {}, val auc: {}, new node val auc: {}'.format(np.mean(auc), val_auc, nn_val_auc))
     logger.info('train ap: {}, val ap: {}, new node val ap: {}'.format(np.mean(ap), val_ap, nn_val_ap))
 
-    if early_stopper.early_stop_check(val_ap):
-        logger.info('Early stopping at epoch {}'.format(epoch))
-        best_model_path = get_checkpoint_path(early_stopper.best_epoch)
-        model.load_state_dict(torch.load(best_model_path))
-        model.eval()
+    # DyGMamba-style: require joint improvement on val AP and val AUC
+    val_metric_indicator = [
+        ('average_precision', val_ap, True),
+        ('roc_auc', val_auc, True),
+    ]
+    early_stop, improved = early_stopper.step(val_metric_indicator, epoch)
+    if improved:
+        torch.save(model.state_dict(), get_checkpoint_path(epoch))
+    if early_stop:
+        logger.info('No improvement over {} epochs, stop training'.format(early_stopper.patience))
         break
-    torch.save(model.state_dict(), get_checkpoint_path(epoch))
+
+logger.info(f'Loading the best model at epoch {early_stopper.best_epoch}')
+best_model_path = get_checkpoint_path(early_stopper.best_epoch)
+model.load_state_dict(torch.load(best_model_path))
+model.eval()
 
 model.ngh_finder = full_ngh_finder
 test_acc, test_ap, _, test_auc = eval_one_epoch('test old', model, test_rand_sampler, test_src_l, test_dst_l, test_ts_l, test_label_l)
