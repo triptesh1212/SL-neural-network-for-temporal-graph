@@ -39,14 +39,6 @@ class EarlyStopMonitor2(object):
         self.early_stop = False
 
     def step(self, metrics, epoch):
-        """
-        Execute early-stop check for one evaluation step (same logic as
-        DyGMamba utils/EarlyStopping.step).
-
-        :param metrics: list of (metric_name, metric_value, higher_better)
-        :param epoch: current epoch index (used to track best checkpoint)
-        :return: (early_stop, improved)
-        """
         metrics_compare_results = []
         for metric_tuple in metrics:
             metric_name, metric_value, higher_better = metric_tuple[0], metric_tuple[1], metric_tuple[2]
@@ -87,6 +79,27 @@ class RandEdgeSampler(object):
     def sample(self, size):
         src_index = np.random.randint(0, len(self.src_list), size)
         dst_index = np.random.randint(0, len(self.dst_list), size)
+        return self.src_list[src_index], self.dst_list[dst_index]
+
+"""DyGMamba-style random negative edge sampler"""
+class NegativeEdgeSampler(object):
+    def __init__(self, src_list, dst_list, seed=None):
+        self.seed = seed
+        self.src_list = np.unique(src_list)
+        self.dst_list = np.unique(dst_list)
+        if self.seed is not None:
+            self.random_state = np.random.RandomState(self.seed)
+
+    def reset_random_state(self):
+        self.random_state = np.random.RandomState(self.seed)
+
+    def sample(self, size):
+        if self.seed is None:
+            src_index = np.random.randint(0, len(self.src_list), size)
+            dst_index = np.random.randint(0, len(self.dst_list), size)
+        else:
+            src_index = self.random_state.randint(0, len(self.src_list), size)
+            dst_index = self.random_state.randint(0, len(self.dst_list), size)
         return self.src_list[src_index], self.dst_list[dst_index]
 
 class TimeEncoder(nn.Module):

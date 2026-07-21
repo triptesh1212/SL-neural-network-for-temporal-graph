@@ -18,7 +18,7 @@ from sklearn.metrics import roc_auc_score
 
 from utils.dygmamba_module import DyGMambaLP
 from utils.graph import NeighborFinder
-from utils import EarlyStopMonitor2, RandEdgeSampler
+from utils import EarlyStopMonitor2, NegativeEdgeSampler
 
 parser = argparse.ArgumentParser('DyGMamba experiments on temporal link prediction')
 parser.add_argument('-d', '--data', type=str, default='wikipedia')
@@ -78,6 +78,9 @@ logger.info(args)
 
 
 def eval_one_epoch(hint, model, sampler, src, dst, ts, label):
+    # DyGMamba-style: reset seeded sampler so val/test negatives are reproducible
+    assert sampler.seed is not None
+    sampler.reset_random_state()
     val_acc, val_ap, val_f1, val_auc = [], [], [], []
     with torch.no_grad():
         model = model.eval()
@@ -177,10 +180,12 @@ for src, dst, eidx, ts in zip(src_l, dst_l, e_idx_l, ts_l):
     full_adj_list[dst].append((src, eidx, ts))
 full_ngh_finder = NeighborFinder(full_adj_list, uniform=UNIFORM)
 
-train_rand_sampler = RandEdgeSampler(train_src_l, train_dst_l)
-val_rand_sampler = RandEdgeSampler(src_l, dst_l)
-test_rand_sampler = RandEdgeSampler(src_l, dst_l)
-nn_test_rand_sampler = RandEdgeSampler(nn_test_src_l, nn_test_dst_l)
+# DyGMamba-style: train unseeded; val/test seeded for reproducible negatives
+train_rand_sampler = NegativeEdgeSampler(train_src_l, train_dst_l)
+val_rand_sampler = NegativeEdgeSampler(src_l, dst_l, seed=0)
+nn_val_rand_sampler = NegativeEdgeSampler(nn_val_src_l, nn_val_dst_l, seed=1)
+test_rand_sampler = NegativeEdgeSampler(src_l, dst_l, seed=2)
+nn_test_rand_sampler = NegativeEdgeSampler(nn_test_src_l, nn_test_dst_l, seed=3)
 
 if torch.cuda.is_available():
     device = torch.device('cuda:{}'.format(GPU))
@@ -253,7 +258,7 @@ for epoch in range(NUM_EPOCH):
 
     model.ngh_finder = full_ngh_finder
     val_acc, val_ap, _, val_auc = eval_one_epoch('val old', model, val_rand_sampler, val_src_l, val_dst_l, val_ts_l, val_label_l)
-    nn_val_acc, nn_val_ap, _, nn_val_auc = eval_one_epoch('val new', model, val_rand_sampler, nn_val_src_l, nn_val_dst_l, nn_val_ts_l, nn_val_label_l)
+    nn_val_acc, nn_val_ap, _, nn_val_auc = eval_one_epoch('val new', model, nn_val_rand_sampler, nn_val_src_l, nn_val_dst_l, nn_val_ts_l, nn_val_label_l)
 
     logger.info('epoch: {}'.format(epoch))
     logger.info('Epoch mean loss: {}'.format(np.mean(m_loss)))
