@@ -29,6 +29,56 @@ class EarlyStopMonitor(object):
             self.num_round += 1
         return self.num_round >= self.max_round
 
+"""DyGMamba-style early stopping"""
+class EarlyStopMonitor2(object):
+    def __init__(self, patience=20):
+        self.patience = patience
+        self.counter = 0
+        self.best_metrics = {}
+        self.best_epoch = 0
+        self.early_stop = False
+
+    def step(self, metrics, epoch):
+        """
+        Execute early-stop check for one evaluation step (same logic as
+        DyGMamba utils/EarlyStopping.step).
+
+        :param metrics: list of (metric_name, metric_value, higher_better)
+        :param epoch: current epoch index (used to track best checkpoint)
+        :return: (early_stop, improved)
+        """
+        metrics_compare_results = []
+        for metric_tuple in metrics:
+            metric_name, metric_value, higher_better = metric_tuple[0], metric_tuple[1], metric_tuple[2]
+
+            if higher_better:
+                if self.best_metrics.get(metric_name) is None or metric_value >= self.best_metrics.get(metric_name):
+                    metrics_compare_results.append(True)
+                else:
+                    metrics_compare_results.append(False)
+            else:
+                if self.best_metrics.get(metric_name) is None or metric_value <= self.best_metrics.get(metric_name):
+                    metrics_compare_results.append(True)
+                else:
+                    metrics_compare_results.append(False)
+
+        # all computed metrics are better than (or equal to) the best metrics
+        if torch.all(torch.tensor(metrics_compare_results)):
+            for metric_tuple in metrics:
+                metric_name, metric_value = metric_tuple[0], metric_tuple[1]
+                self.best_metrics[metric_name] = metric_value
+            self.best_epoch = epoch
+            self.counter = 0
+            improved = True
+        else:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+            improved = False
+
+        return self.early_stop, improved
+
+
 class RandEdgeSampler(object):
     def __init__(self, src_list, dst_list):
         self.src_list = np.unique(src_list)
