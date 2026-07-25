@@ -48,6 +48,7 @@ parser.add_argument('--zeta_imag', type=float, default=0.5, help='init Im(ζ)')
 parser.add_argument('--nu_real', type=float, default=1.0, help='init nu real')
 parser.add_argument('--nu_imag', type=float, default=0.0, help='init nu imag')
 parser.add_argument('--leaky_relu_slope', type=float, default=0.1, help='leaky ReLU slope in SLSeq')
+parser.add_argument('--use_hid_enc', type=int, default=1, help='use hid_enc residual in SLSeq')
 
 try:
     args = parser.parse_args()
@@ -228,6 +229,7 @@ model = DyGSLRNNLP(
     nu_real=args.nu_real,
     nu_imag=args.nu_imag,
     leaky_relu_slope=args.leaky_relu_slope,
+    use_hid_enc=bool(args.use_hid_enc),
 )
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 criterion = torch.nn.BCELoss()
