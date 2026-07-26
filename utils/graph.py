@@ -86,6 +86,18 @@ class NeighborFinder:
         else:
             return neighbors_idx[:left], neighbors_e_idx[:left], neighbors_ts[:left]
 
+    """DygMamba Style"""
+    def find_before_2(self, src_idx, cut_time):
+        neighbors_idx = self.node_idx_l[self.off_set_l[src_idx]:self.off_set_l[src_idx + 1]]
+        neighbors_ts = self.node_ts_l[self.off_set_l[src_idx]:self.off_set_l[src_idx + 1]]
+        neighbors_e_idx = self.edge_idx_l[self.off_set_l[src_idx]:self.off_set_l[src_idx + 1]]
+
+        if len(neighbors_idx) == 0:
+            return neighbors_idx, neighbors_e_idx, neighbors_ts
+
+        i = np.searchsorted(neighbors_ts, cut_time)
+        return neighbors_idx[:i], neighbors_e_idx[:i], neighbors_ts[:i]
+
     def get_temporal_neighbor(self, src_idx_l, cut_time_l, num_neighbors=20):
         """
         Params

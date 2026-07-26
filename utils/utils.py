@@ -146,7 +146,8 @@ class NeighborFinderAdapter:
     def get_all_first_hop_neighbors(self, node_ids: np.ndarray, node_interact_times: np.ndarray):
         nodes_neighbor_ids_list, nodes_edge_ids_list, nodes_neighbor_times_list = [], [], []
         for node_id, interact_time in zip(node_ids, node_interact_times):
-            ngh_idx, ngh_eidx, ngh_ts = self.ngh_finder.find_before(int(node_id), float(interact_time))
+            #ngh_idx, ngh_eidx, ngh_ts = self.ngh_finder.find_before(int(node_id), float(interact_time)) #TGAT-style
+            ngh_idx, ngh_eidx, ngh_ts = self.ngh_finder.find_before_2(int(node_id), float(interact_time)) #DyGmamba-style
             nodes_neighbor_ids_list.append(np.asarray(ngh_idx))
             nodes_edge_ids_list.append(np.asarray(ngh_eidx))
             nodes_neighbor_times_list.append(np.asarray(ngh_ts))
