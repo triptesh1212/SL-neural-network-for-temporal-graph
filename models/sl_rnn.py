@@ -97,12 +97,14 @@ def eval_one_epoch(hint, model, sampler, src, dst, ts, label):
     val_acc, val_ap, val_f1, val_auc = [], [], [], []
     with torch.no_grad():
         model = model.eval()
-        test_batch_size = 30
+        #test_batch_size = 30
+        test_batch_size = BATCH_SIZE
         num_test_instance = len(src)
         num_test_batch = math.ceil(num_test_instance / test_batch_size)
         for k in range(num_test_batch):
             s_idx = k * test_batch_size
-            e_idx = min(num_test_instance - 1, s_idx + test_batch_size)
+            #e_idx = min(num_test_instance - 1, s_idx + test_batch_size)
+            e_idx = min(num_test_instance, s_idx + test_batch_size)
             src_l_cut = src[s_idx:e_idx]
             dst_l_cut = dst[s_idx:e_idx]
             ts_l_cut = ts[s_idx:e_idx]
@@ -136,7 +138,8 @@ random.seed(2020)
 total_node_set = set(np.unique(np.hstack([g_df.u.values, g_df.i.values])))
 num_total_unique_nodes = len(total_node_set)
 
-candidate_nodes = list(set(src_l[ts_l > val_time]).union(set(dst_l[ts_l > val_time])))
+#candidate_nodes = list(set(src_l[ts_l > val_time]).union(set(dst_l[ts_l > val_time])))
+candidate_nodes = sorted(set(src_l[ts_l > val_time]).union(set(dst_l[ts_l > val_time])))
 mask_node_set = set(random.sample(candidate_nodes, min(int(0.1 * num_total_unique_nodes), len(candidate_nodes))))
 mask_src_flag = g_df.u.map(lambda x: x in mask_node_set).values
 mask_dst_flag = g_df.i.map(lambda x: x in mask_node_set).values
@@ -251,7 +254,8 @@ for epoch in range(NUM_EPOCH):
     logger.info('start {} epoch'.format(epoch))
     for k in range(num_batch):
         s_idx = k * BATCH_SIZE
-        e_idx = min(num_instance - 1, s_idx + BATCH_SIZE)
+        #e_idx = min(num_instance - 1, s_idx + BATCH_SIZE)
+        e_idx = min(num_instance, s_idx + BATCH_SIZE)
         src_l_cut = train_src_l[s_idx:e_idx]
         dst_l_cut = train_dst_l[s_idx:e_idx]
         ts_l_cut = train_ts_l[s_idx:e_idx]
@@ -264,15 +268,20 @@ for epoch in range(NUM_EPOCH):
         optimizer.zero_grad()
         model.train()
         pos_prob, neg_prob = model.contrast(src_l_cut, dst_l_cut, dst_l_fake, ts_l_cut, NUM_NEIGHBORS)
-        loss = criterion(pos_prob, pos_label) + criterion(neg_prob, neg_label)
+        #loss = criterion(pos_prob, pos_label) + criterion(neg_prob, neg_label)
+        predicts = torch.cat([pos_prob, neg_prob], dim=0)
+        labels = torch.cat([pos_label, neg_label], dim=0)
+        loss = criterion(predicts, labels)
         loss.backward()
         optimizer.step()
 
         with torch.no_grad():
             model.eval()
-            pred_score = np.concatenate([pos_prob.cpu().detach().numpy(), neg_prob.cpu().detach().numpy()])
+            #pred_score = np.concatenate([pos_prob.cpu().detach().numpy(), neg_prob.cpu().detach().numpy()])
+            pred_score = predicts.cpu().detach().numpy()
             pred_label = pred_score > 0.5
-            true_label = np.concatenate([np.ones(size), np.zeros(size)])
+            #true_label = np.concatenate([np.ones(size), np.zeros(size)])
+            true_label = labels.cpu().numpy()
             acc.append((pred_label == true_label).mean())
             ap.append(average_precision_score(true_label, pred_score))
             m_loss.append(loss.item())
