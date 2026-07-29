@@ -49,6 +49,8 @@ parser.add_argument('--nu_real', type=float, default=1.0, help='init nu real')
 parser.add_argument('--nu_imag', type=float, default=0.0, help='init nu imag')
 parser.add_argument('--leaky_relu_slope', type=float, default=0.1, help='leaky ReLU slope in SLSeq')
 parser.add_argument('--use_hid_enc', type=int, default=1, help='use hid_enc residual in SLSeq')
+parser.add_argument('--hid_coef', type=float, default=0.1, help='coefficient on hid_enc')
+parser.add_argument('--input_dt', type=int, default=0, help='parameterise dt=function(WX); input 0/1')
 
 try:
     args = parser.parse_args()
@@ -233,6 +235,8 @@ model = DyGSLRNNLP(
     nu_imag=args.nu_imag,
     leaky_relu_slope=args.leaky_relu_slope,
     use_hid_enc=bool(args.use_hid_enc),
+    hid_coef=args.hid_coef,
+    input_dt=bool(args.input_dt),
 )
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 criterion = torch.nn.BCELoss()

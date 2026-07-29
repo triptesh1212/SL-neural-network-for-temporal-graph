@@ -39,6 +39,8 @@ class DyGSLRNN(nn.Module):
         nu_imag: float = 0.0,
         leaky_relu_slope: float = 0.1,
         use_hid_enc: bool = True,
+        hid_coef: float = 0.1,
+        input_dt: bool = False,
     ):
         super().__init__()
 
@@ -107,6 +109,8 @@ class DyGSLRNN(nn.Module):
             nu_imag=nu_imag,
             leaky_relu_slope=leaky_relu_slope,
             use_hid_enc=use_hid_enc,
+            hid_coef=hid_coef,
+            input_dt=input_dt,
         )
         self.sl_layers = nn.ModuleList([SLSeq(d_model=d_node, **sl_kwargs) for _ in range(self.num_layers)])
         self.sl_t_diff = nn.ModuleList([SLSeq(d_model=d_time, **sl_kwargs) for _ in range(self.num_layers)])
@@ -501,6 +505,8 @@ class DyGSLRNNLP(nn.Module):
         nu_imag: float = 0.0,
         leaky_relu_slope: float = 0.1,
         use_hid_enc: bool = True,
+        hid_coef: float = 0.1,
+        input_dt: bool = False,
     ):
         super().__init__()
         self._ngh_finder = ngh_finder
@@ -528,6 +534,8 @@ class DyGSLRNNLP(nn.Module):
             nu_imag=nu_imag,
             leaky_relu_slope=leaky_relu_slope,
             use_hid_enc=use_hid_enc,
+            hid_coef=hid_coef,
+            input_dt=input_dt,
         )
         node_feat_dim = n_feat.shape[1]
         self.link_predictor = MergeLayerTD(

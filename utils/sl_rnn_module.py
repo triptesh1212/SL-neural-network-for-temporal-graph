@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
+import math
 
 from functools import partial
 
@@ -165,6 +166,8 @@ class SLSeq(nn.Module):
         nu_imag: float = 0.0,
         leaky_relu_slope: float = 0.1,
         use_hid_enc: bool = True,
+        hid_coef: float = 0.1,
+        input_dt: bool = False,
     ):
         super().__init__()
         self.d_model = d_model
@@ -172,6 +175,8 @@ class SLSeq(nn.Module):
         self.p = p
         self.tol = tol
         self.use_hid_enc = use_hid_enc
+        self.hid_coef = hid_coef
+        self.input_dt = input_dt
         self.activation = partial(F.leaky_relu, negative_slope=leaky_relu_slope)
 
         self.enc = nn.Linear(d_model, d_model, dtype=torch.cfloat)
@@ -188,13 +193,21 @@ class SLSeq(nn.Module):
         if use_hid_enc:
             self.hid_enc = nn.Linear(d_model, d_model, dtype=torch.cfloat)
 
-    def ode_step(self, h):
+        if input_dt:
+            self.dt_proj = nn.Linear(d_model, 1)
+            with torch.no_grad():
+                self.dt_proj.weight.zero_()
+                self.dt_proj.bias.fill_(math.log(math.expm1(max(dt, 1e-4))))
+
+    def ode_step(self, h, dt=None):
         # Same closed-form SL flow as SL-TGAT (sl_exact_step); clamp Re(ζ), Re(ν) for stability
+        if dt is None:
+            dt = self.dt
         zeta = torch.complex(self.zeta.real.clamp(min=1e-4), self.zeta.imag)
         nu = torch.complex(self.nu.real.clamp(min=1e-4), self.nu.imag)
-        h_new = sl_exact_step(h, zeta, nu, self.dt)
+        h_new = sl_exact_step(h, zeta, nu, dt)
         if self.use_hid_enc:
-            h_new = h_new + 0.1 * torch.view_as_complex(
+            h_new = h_new + self.hid_coef * torch.view_as_complex(
                 self.activation(torch.view_as_real(self.hid_enc(h_new)))
             )
         return h_new
@@ -208,7 +221,12 @@ class SLSeq(nn.Module):
         h = self.h0.unsqueeze(0).expand(B, -1)
         outputs = []
         for t in range(L):
-            h = self.ode_step(h)
-            h = h + u[:, t, :]
+            if self.input_dt:
+                dt_t = F.softplus(self.dt_proj(x[:, t, :]))  
+                h = self.ode_step(h, dt_t)
+                h = h + dt_t * u[:, t, :]
+            else:
+                h = self.ode_step(h)
+                h = h + u[:, t, :]
             outputs.append(self.dec(h).real)
         return torch.stack(outputs, dim=1)
