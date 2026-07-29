@@ -18,4 +18,4 @@ cd $WORK/tripteshb/SL-neural-network-for-temporal-graph
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-python3 models/sl_rnn.py -d wikipedia --zeta_real 0.04 --zeta_imag 0.5 --nu_real 1.0 --nu_imag 0.0 --sl_dt 1.0 --n_layer 2 --n_epoch 20 --use_hid_enc 0
+python3 models/sl_rnn.py -d wikipedia --zeta_real 0.04 --zeta_imag 0.5 --nu_real 1.0 --nu_imag 0.0 --sl_dt 1.0 --n_layer 2 --n_epoch 100 --hid_coef 0.1 --input_dt 0
