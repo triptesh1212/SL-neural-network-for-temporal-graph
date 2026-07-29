@@ -214,7 +214,7 @@ model = MemoryLP(
     dst_node_std_time_shift=dst_std,
     device=str(device),
 )
-optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE)
 criterion = torch.nn.BCELoss()
 model = model.to(device)
 

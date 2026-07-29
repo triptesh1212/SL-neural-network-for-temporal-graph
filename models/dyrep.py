@@ -207,7 +207,7 @@ model = MemoryLP(
     drop_out=DROP_OUT,
     device=str(device),
 )
-optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE)
 criterion = torch.nn.BCELoss()
 model = model.to(device)
 

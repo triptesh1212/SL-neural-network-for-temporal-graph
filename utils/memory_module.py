@@ -287,7 +287,8 @@ class MemoryBank(nn.Module):
         return self.node_memories[torch.from_numpy(node_ids)]
 
     def set_memories(self, node_ids: np.ndarray, updated_node_memories: torch.Tensor):
-        self.node_memories[torch.from_numpy(node_ids)] = updated_node_memories
+        # write via .data + detach so memory Parameters stay leaves for the optimizer
+        self.node_memories.data[torch.from_numpy(node_ids)] = updated_node_memories.detach()
 
     def backup_memory_bank(self):
         cloned_node_raw_messages = {}
@@ -341,7 +342,7 @@ class MemoryUpdater(nn.Module):
         node_memories = self.memory_bank.get_memories(node_ids=unique_node_ids)
         updated_node_memories = self.memory_updater(unique_node_messages, node_memories)
         self.memory_bank.set_memories(node_ids=unique_node_ids, updated_node_memories=updated_node_memories)
-        self.memory_bank.node_last_updated_times[torch.from_numpy(unique_node_ids)] = (
+        self.memory_bank.node_last_updated_times.data[torch.from_numpy(unique_node_ids)] = (
             torch.from_numpy(unique_node_timestamps).float().to(unique_node_messages.device)
         )
 
