@@ -153,6 +153,42 @@ class NeighborFinderAdapter:
             nodes_neighbor_times_list.append(np.asarray(ngh_ts))
         return nodes_neighbor_ids_list, nodes_edge_ids_list, nodes_neighbor_times_list
 
+    def get_historical_neighbors(self, node_ids: np.ndarray, node_interact_times: np.ndarray, num_neighbors: int = 20):
+        assert num_neighbors > 0
+        nodes_neighbor_ids = np.zeros((len(node_ids), num_neighbors)).astype(np.int64)
+        nodes_edge_ids = np.zeros((len(node_ids), num_neighbors)).astype(np.int64)
+        nodes_neighbor_times = np.zeros((len(node_ids), num_neighbors)).astype(np.float32)
+
+        uniform = getattr(self.ngh_finder, 'uniform', False) or self.sample_neighbor_strategy == 'uniform'
+        for idx, (node_id, interact_time) in enumerate(zip(node_ids, node_interact_times)):
+            ngh_idx, ngh_eidx, ngh_ts = self.ngh_finder.find_before_2(int(node_id), float(interact_time))
+            if len(ngh_idx) == 0:
+                continue
+            if uniform:
+                if self.seed is not None:
+                    if not hasattr(self, 'random_state'):
+                        self.random_state = np.random.RandomState(self.seed)
+                    sampled_indices = self.random_state.randint(0, len(ngh_idx), num_neighbors)
+                else:
+                    sampled_indices = np.random.randint(0, len(ngh_idx), num_neighbors)
+                nodes_neighbor_ids[idx, :] = ngh_idx[sampled_indices]
+                nodes_edge_ids[idx, :] = ngh_eidx[sampled_indices]
+                nodes_neighbor_times[idx, :] = ngh_ts[sampled_indices]
+                sorted_position = nodes_neighbor_times[idx, :].argsort()
+                nodes_neighbor_ids[idx, :] = nodes_neighbor_ids[idx, :][sorted_position]
+                nodes_edge_ids[idx, :] = nodes_edge_ids[idx, :][sorted_position]
+                nodes_neighbor_times[idx, :] = nodes_neighbor_times[idx, :][sorted_position]
+            else:
+                # recent: take most recent neighbors, pad at the front
+                ngh_idx = ngh_idx[-num_neighbors:]
+                ngh_eidx = ngh_eidx[-num_neighbors:]
+                ngh_ts = ngh_ts[-num_neighbors:]
+                nodes_neighbor_ids[idx, num_neighbors - len(ngh_idx):] = ngh_idx
+                nodes_edge_ids[idx, num_neighbors - len(ngh_eidx):] = ngh_eidx
+                nodes_neighbor_times[idx, num_neighbors - len(ngh_ts):] = ngh_ts
+
+        return nodes_neighbor_ids, nodes_edge_ids, nodes_neighbor_times
+
     def reset_random_state(self):
         if self.seed is not None:
             self.random_state = np.random.RandomState(self.seed)

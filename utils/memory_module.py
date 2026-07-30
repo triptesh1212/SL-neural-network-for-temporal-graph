@@ -435,7 +435,7 @@ class GraphAttentionEmbedding(nn.Module):
             current_layer_num=current_layer_num - 1, num_neighbors=num_neighbors)
 
         neighbor_node_ids, neighbor_edge_ids, neighbor_times = \
-            self.neighbor_sampler.get_all_first_hop_neighbors(
+            self.neighbor_sampler.get_historical_neighbors(
                 node_ids=node_ids, node_interact_times=node_interact_times, num_neighbors=num_neighbors)
 
         neighbor_node_conv_features = self.compute_node_temporal_embeddings(
