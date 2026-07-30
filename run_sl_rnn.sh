@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=sl_tgat
+#SBATCH --job-name=sl_rnn
 #SBATCH --account=IscrC_SISTER
 #SBATCH --partition=boost_usr_prod
 #SBATCH --nodes=1
