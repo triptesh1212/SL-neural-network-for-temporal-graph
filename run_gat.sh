@@ -18,4 +18,4 @@ cd $WORK/tripteshb/SL-neural-network-for-temporal-graph
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-!python -u models/gat.py -d wikipedia --gpu 0 --prefix gat --n_epoch 100
+python3 -u models/gat.py -d wikipedia --gpu 0 --prefix gat --n_epoch 100
