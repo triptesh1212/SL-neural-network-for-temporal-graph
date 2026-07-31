@@ -9,6 +9,7 @@ This project builds upon and adapts code from the following repositories:
 - TGAT - [https://github.com/StatsDLMathsRecomSys/Inductive-representation-learning-on-temporal-graphs](https://github.com/StatsDLMathsRecomSys/Inductive-representation-learning-on-temporal-graphs)
 - SL-GNN - [https://github.com/kevvzhang/StuartLandauGNN](https://github.com/kevvzhang/StuartLandauGNN)
 - DyGMamba - [https://github.com/ZifengDing/DyGMamba](https://github.com/ZifengDing/DyGMamba)
+- GAT - [https://github.com/petarV-/GAT](https://github.com/petarV-/GAT)
 
 I gratefully acknowledge the authors for making their code publicly available. Modifications have been made to integrate and extend these implementations for this project.
 
@@ -74,9 +75,6 @@ mkdir user_directory_x
 cd user_directory_x
 ```
 
-  
-
-
 First load the Python 3.11 environment:
 
 ```{bash}
@@ -94,9 +92,6 @@ Activate your Python virtual environment before installing packages:
 ```{bash}
 source $WORK/user_directory_x/venv/bin/activate
 ```
-
-  
-
 
 ```{bash}
 git clone https://github.com/triptesh1212/SL-neural-network-for-temporal-graph.git
@@ -125,9 +120,6 @@ tail -f log/slurm_<>.out
 ```{bash}
 cat log/slurm_<>.err
 ```
-
-  
-
 
 ```{bash}
 deactivate
