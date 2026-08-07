@@ -43,7 +43,7 @@ parser.add_argument('--patience', type=int, default=20, help='patience for early
 parser.add_argument('--sl_dt', type=float, default=1.0, help='SL time step')
 parser.add_argument('--sl_p', type=int, default=2, help='SL nonlinearity power')
 parser.add_argument('--sl_tol', type=float, default=1e-5, help='Newton tolerance for amplitude step')
-parser.add_argument('--zeta_real', type=float, default=0.04, help='init Re(ζ)')
+parser.add_argument('--zeta_real', type=float, default=0.0, help='ignored: Re(ζ) is fixed at 0')
 parser.add_argument('--zeta_imag', type=float, default=0.5, help='init Im(ζ)')
 parser.add_argument('--nu_real', type=float, default=1.0, help='init nu real')
 parser.add_argument('--nu_imag', type=float, default=0.0, help='init nu imag')

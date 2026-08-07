@@ -160,7 +160,7 @@ class SLSeq(nn.Module):
         dt: float = 1.0,
         p: int = 2,
         tol: float = 1e-5,
-        zeta_real: float = 0.04,
+        zeta_real: float = 0.0,  # unused: Re(ζ) is fixed at 0
         zeta_imag: float = 0.5,
         nu_real: float = 1.0,
         nu_imag: float = 0.0,
@@ -183,11 +183,19 @@ class SLSeq(nn.Module):
         self.dec = nn.Linear(d_model, d_model, dtype=torch.cfloat)
         self.h0 = nn.Parameter(torch.randn(d_model, dtype=torch.cfloat) * 0.01)
 
+        def _softplus_inv(x: float) -> float:
+            return math.log(math.expm1(max(x, 1e-4)))
+
+        _ = zeta_real 
         self.zeta = nn.Parameter(
-            torch.full((d_model,), complex(zeta_real, zeta_imag), dtype=torch.cfloat)
+            torch.full((d_model,), complex(0.0, zeta_imag), dtype=torch.cfloat)
         )
         self.nu = nn.Parameter(
-            torch.full((d_model,), complex(nu_real, nu_imag), dtype=torch.cfloat)
+            torch.full(
+                (d_model,),
+                complex(_softplus_inv(nu_real), nu_imag),
+                dtype=torch.cfloat,
+            )
         )
 
         if use_hid_enc:
@@ -200,11 +208,10 @@ class SLSeq(nn.Module):
                 self.dt_proj.bias.fill_(math.log(math.expm1(max(dt, 1e-4))))
 
     def ode_step(self, h, dt=None):
-        # Same closed-form SL flow as SL-TGAT (sl_exact_step); clamp Re(ζ), Re(ν) for stability
         if dt is None:
             dt = self.dt
-        zeta = torch.complex(self.zeta.real.clamp(min=1e-4), self.zeta.imag)
-        nu = torch.complex(self.nu.real.clamp(min=1e-4), self.nu.imag)
+        zeta = torch.complex(torch.zeros_like(self.zeta.imag), self.zeta.imag)
+        nu = torch.complex(F.softplus(self.nu.real), self.nu.imag)
         h_new = sl_exact_step(h, zeta, nu, dt)
         if self.use_hid_enc:
             h_new = h_new + self.hid_coef * torch.view_as_complex(
