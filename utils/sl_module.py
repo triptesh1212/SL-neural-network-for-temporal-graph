@@ -44,13 +44,18 @@ def sl_exact_step(h, zeta, nu, dt):
 
     propagator = torch.exp(zeta * dt)
     absh2 = h.real ** 2 + h.imag ** 2
-    c = torch.where(
-        zr.abs() < 1e-8,
-        2.0 * nr * dt,
-        (nr / zr) * torch.expm1(2.0 * zr * dt),
+    x = 2.0 * zr * dt
+    near0 = x.abs() < 1e-6
+    x_safe = torch.where(near0, torch.ones_like(x), x)
+    expm1_over_x = torch.where(
+        near0,
+        1.0 + x * (0.5 + x / 6.0),
+        torch.expm1(x_safe) / x_safe,
     )
-    d = 1.0 + c * absh2
-    saturation = torch.exp((-nu / (2.0 * nr)) * torch.log(d))
+    c = (2.0 * nr * dt) * expm1_over_x
+    d = (1.0 + c * absh2).clamp(min=1e-8)
+    nr_safe = nr.clamp(min=1e-8)
+    saturation = torch.exp((-nu / (2.0 * nr_safe)) * torch.log(d))
     return propagator * saturation * h
 
 
